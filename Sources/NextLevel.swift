@@ -1370,6 +1370,8 @@ extension NextLevel {
             }
         }
 
+        mirroringMode = mirroringMode
+
         if didChangeOrientation == true {
             self.deviceDelegate?.nextLevel(self, didChangeDeviceOrientation: currentOrientation)
         }
@@ -1383,6 +1385,7 @@ extension NextLevel {
                 }
             }
         }
+        mirroringMode = mirroringMode
     }
 }
 
@@ -2216,17 +2219,17 @@ extension NextLevel {
 
         }
     }
-    
+
     /// Changes the current device frame rate to the highest frame rate supported by the device
     public func configureDeviceForHighestFrameRate() {
         self.executeClosureAsyncOnSessionQueueIfNecessary {
             guard let device = self._currentDevice else {
                 return
             }
-            
+
             var bestFormat: AVCaptureDevice.Format?
             var bestFrameRateRange: AVFrameRateRange?
-            
+
             for format in device.formats {
                for range in format.videoSupportedFrameRateRanges {
                    if range.maxFrameRate > bestFrameRateRange?.maxFrameRate ?? 0 {
@@ -2235,20 +2238,20 @@ extension NextLevel {
                    }
                }
             }
-            
+
             if let bestFormat = bestFormat,
                let bestFrameRateRange = bestFrameRateRange {
                 do {
                     try device.lockForConfiguration()
-                    
+
                     // Set the device's active format.
                     device.activeFormat = bestFormat
-                    
+
                     // Set the device's min/max frame duration.
                     let duration = bestFrameRateRange.minFrameDuration
                     device.activeVideoMinFrameDuration = duration
                     device.activeVideoMaxFrameDuration = duration
-                    
+
                     device.unlockForConfiguration()
                 } catch {
                     // Handle error.
@@ -2257,7 +2260,7 @@ extension NextLevel {
             }
         }
     }
-    
+
 }
 
 // MARK: - video capture
